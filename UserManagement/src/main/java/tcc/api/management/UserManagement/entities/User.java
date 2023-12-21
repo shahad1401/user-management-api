@@ -1,7 +1,7 @@
 package tcc.api.management.UserManagement.entities;
 
 import jakarta.persistence.*;
-
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name="USER")
@@ -10,6 +10,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(name="USERNAME",unique = true)
+    @NotBlank(message = "username is empty")
     private String username;
     @Column(name="PASSWORD")
     private String pass;
