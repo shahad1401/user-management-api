@@ -3,10 +3,7 @@ package tcc.api.management.UserManagement.controllers;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tcc.api.management.UserManagement.entities.User;
 import tcc.api.management.UserManagement.repository.UserRepository;
@@ -21,11 +18,10 @@ public class UserController {
 
 
     @RequestMapping(value="user", method = RequestMethod.POST)
-    public void createUser(@RequestParam String username){
+    public void createUser(@RequestBody User user){
         try{
-            if (userRepository.findByUsername(username) == null) {
-                User u = new User(username,"pass");
-                userRepository.save(u);
+            if (userRepository.findByUsername(user.getUsername()) == null) {
+                userRepository.save(user);
             }else{
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Username already exists");
