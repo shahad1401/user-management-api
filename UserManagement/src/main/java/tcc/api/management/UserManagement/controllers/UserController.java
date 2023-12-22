@@ -3,6 +3,7 @@ package tcc.api.management.UserManagement.controllers;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tcc.api.management.UserManagement.entities.User;
@@ -18,40 +19,45 @@ public class UserController {
 
 
     @RequestMapping(value="user", method = RequestMethod.POST)
-    public void createUser(@RequestBody User user){
+    public ResponseEntity<User> createUser(@RequestBody User user){
         try{
             if (userRepository.findByUsername(user.getUsername()) == null) {
-                userRepository.save(user);
+                User createdUser = userRepository.save(user);
+                return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
             }else{
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Username already exists");
             }
-        }catch (ConstraintViolationException e){
+        }catch (ConstraintViolationException e) {
             String message = new ArrayList<>(e.getConstraintViolations()).get(0).getMessage();
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, message);
         }
     }
 
-    @RequestMapping(value="user", method = RequestMethod.GET)
-    public User readUser(@RequestParam String username){
-        User u = userRepository.findByUsername(username);
-        if (u != null){
-            return userRepository.findByUsername(username);
-        }
-        throw new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "User doesn't exist");
+    @RequestMapping(value="user/{id}", method = RequestMethod.GET)
+    public ResponseEntity<User> readUser(@PathVariable int id){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "User doesn't exist"));
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @RequestMapping(value="user", method = RequestMethod.PUT)
-    public void updateUser(@RequestParam String username, @RequestParam String newUsername){
-        User user = readUser(username);
-        user.setUsername(newUsername);
-        userRepository.save(user);
+    @RequestMapping(value="user/{id}", method = RequestMethod.PUT)
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User user){
+        User existingUser = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "User doesn't exist"));
+        existingUser.setUsername(user.getUsername());
+        existingUser.setPass(user.getPass());
+        User newUser = userRepository.save(existingUser);
+        return new ResponseEntity<>(newUser, HttpStatus.OK);
     }
 
-    @RequestMapping(value="user", method = RequestMethod.DELETE)
-    public void deleteUser(@RequestParam String username){
-        userRepository.delete(readUser(username));
+    @RequestMapping(value="user/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<User> deleteUser(@PathVariable int id){
+        User user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "User doesn't exist"));
+        userRepository.delete(user);
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 }
