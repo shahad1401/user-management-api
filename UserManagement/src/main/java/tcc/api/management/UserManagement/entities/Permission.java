@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import tcc.api.management.UserManagement.types.PermissionEnum;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -19,7 +20,7 @@ public class Permission {
 
     @ManyToMany(mappedBy = "permissions")
     @JsonIgnoreProperties(value = "roles")
-    private Set<Role> roles;
+    private Set<Role> roles = new HashSet<>();
 
     public Permission(){
         super();
