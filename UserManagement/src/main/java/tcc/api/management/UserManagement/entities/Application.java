@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
+import java.io.Serializable;
+
 @Entity
-public class Application {
+public class Application implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

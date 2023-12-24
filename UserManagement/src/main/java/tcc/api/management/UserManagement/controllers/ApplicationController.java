@@ -2,6 +2,8 @@ package tcc.api.management.UserManagement.controllers;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +16,7 @@ import tcc.api.management.UserManagement.repository.APIRepository;
 import tcc.api.management.UserManagement.repository.ApplicationRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class ApplicationController {
@@ -26,6 +29,7 @@ public class ApplicationController {
 
     @RequestMapping(value="api/{id}/application", method = RequestMethod.POST)
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CacheEvict(value = "Apps", allEntries = true)
     public ResponseEntity<API> createApplication(@PathVariable int id, @RequestBody Application application) {
         try{
             API api = apiRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
@@ -41,6 +45,14 @@ public class ApplicationController {
         }
 
     }
+
+    @RequestMapping(value="application/all", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('DEVELOPER')")
+    @Cacheable("Apps")
+    public List<Application> readAllApplications() {
+        List<Application> applications = appRepository.findAll();
+        return applications;
+    }
     @RequestMapping(value="application/{appid}", method = RequestMethod.GET)
     @PreAuthorize("hasAuthority('DEVELOPER')")
     public ResponseEntity<Application> readApplication(@PathVariable int appid) {
@@ -51,6 +63,7 @@ public class ApplicationController {
 
     @RequestMapping(value="application/{appid}", method = RequestMethod.PUT)
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CacheEvict(value = "Apps", allEntries = true)
     public ResponseEntity<Application> updateApplication(@PathVariable int appid, @RequestBody Application application){
             Application existingApplication = appRepository.findById(appid).orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Application doesn't exist"));
