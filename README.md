@@ -14,3 +14,40 @@ Deployment instructions :
 - an admin user is needed to post,put,delete APIs and Applications.
 - a developer user is needed to get APIs and Applications.
 - use Postman basic authentication to login with created user
+
+JSON Objects to use in request body :
+
+User :
+{
+    "username":"amdin1",
+    "pass":"password"
+}
+
+Role : 
+
+{
+    "role":"ADMIN"
+}
+
+Permission : 
+
+{
+    "permission":"CREATE"
+}
+
+API : 
+
+{
+    "name":"API",
+    "url":"cars",
+    "method":"POST",
+    "secure":"true",
+    "authorizationMethod":"method"
+}
+
+Application : 
+
+{
+"name":"carsApp",
+"status":"running"
+}
