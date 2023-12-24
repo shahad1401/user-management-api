@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tcc.api.management.UserManagement.entities.User;
@@ -17,11 +18,15 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @RequestMapping(value="user", method = RequestMethod.POST)
     public ResponseEntity<User> createUser(@RequestBody User user){
         try{
             if (userRepository.findByUsername(user.getUsername()) == null) {
+                user.setPass(passwordEncoder.encode(user.getPass()));
                 User createdUser = userRepository.save(user);
                 return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
             }else{

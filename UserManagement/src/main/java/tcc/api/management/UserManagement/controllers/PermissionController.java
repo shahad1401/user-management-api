@@ -8,11 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import tcc.api.management.UserManagement.entities.Permission;
 import tcc.api.management.UserManagement.entities.Role;
-import tcc.api.management.UserManagement.entities.User;
 import tcc.api.management.UserManagement.repository.PermissionRepository;
 import tcc.api.management.UserManagement.repository.RoleRepository;
 import tcc.api.management.UserManagement.types.PermissionEnum;
-import tcc.api.management.UserManagement.types.RoleEnum;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -46,7 +44,7 @@ public class PermissionController {
         }
     }
 
-        @RequestMapping(value="role/{id}/permissions", method = RequestMethod.GET)
+        @RequestMapping(value="roles/{id}/permissions", method = RequestMethod.GET)
         public ResponseEntity<Set<PermissionEnum>> readAllPermissions(@PathVariable int id){
             Role role = roleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Role doesn't exist"));
@@ -55,14 +53,14 @@ public class PermissionController {
         }
 
     @RequestMapping(value="permissions/{permissionId}", method = RequestMethod.GET)
-    public ResponseEntity<Permission> readRole(@PathVariable int permissionId){
+    public ResponseEntity<Permission> readPermission(@PathVariable int permissionId){
         Permission permission = permissionRepository.findById(permissionId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Permission doesn't exist"));
         return new ResponseEntity<>(permission, HttpStatus.OK);
     }
 
     @RequestMapping(value="permissions/{permissionId}", method = RequestMethod.PUT)
-    public ResponseEntity<Permission> updateRole(@PathVariable int permissionId, @RequestBody Permission permission){
+    public ResponseEntity<Permission> updatePermission(@PathVariable int permissionId, @RequestBody Permission permission){
         Permission existingPermission = permissionRepository.findById(permissionId).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Permission doesn't exist"));
         existingPermission.setPermission(permission.getPermission());
@@ -70,8 +68,8 @@ public class PermissionController {
         return new ResponseEntity<>(updatedPermission,HttpStatus.OK);
     }
 
-    @RequestMapping(value="role/{id}/permissions/{permissionId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Role> deleteUserRole(@PathVariable int id,@PathVariable int permissionId){
+    @RequestMapping(value="roles/{id}/permissions/{permissionId}", method = RequestMethod.DELETE)
+    public ResponseEntity<Role> deleteRolePermission(@PathVariable int id,@PathVariable int permissionId){
         Role role = roleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Role doesn't exist"));
         Permission permission = permissionRepository.findById(permissionId).orElseThrow(() -> new ResponseStatusException(
@@ -79,13 +77,5 @@ public class PermissionController {
         role.removePermission(permission);
         roleRepository.save(role);
         return new ResponseEntity<>(role,HttpStatus.OK);
-    }
-
-    @RequestMapping(value="permissions/{permissionId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Permission> deleteRole(@PathVariable int permissionId){
-        Permission permission = permissionRepository.findById(permissionId).orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.BAD_REQUEST, "Permission doesn't exist"));
-        permissionRepository.delete(permission);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

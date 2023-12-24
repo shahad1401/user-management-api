@@ -13,8 +13,6 @@ import tcc.api.management.UserManagement.repository.UserRepository;
 import tcc.api.management.UserManagement.types.RoleEnum;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,9 +53,9 @@ public class RoleController {
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 
-    @RequestMapping(value="roles/{roleId}", method = RequestMethod.GET)
-    public ResponseEntity<Role> readRole(@PathVariable int roleId){
-        Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResponseStatusException(
+    @RequestMapping(value="roles/{id}", method = RequestMethod.GET)
+    public ResponseEntity<Role> readRole(@PathVariable int id){
+        Role role = roleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Role doesn't exist"));
         return new ResponseEntity<>(role, HttpStatus.OK);
     }
@@ -67,7 +65,7 @@ public class RoleController {
         Role existingRole = roleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Role doesn't exist"));
         existingRole.setRole(role.getRole());
-        Role updatedRole = roleRepository.save(role);
+        Role updatedRole = roleRepository.save(existingRole);
         return new ResponseEntity<>(updatedRole,HttpStatus.OK);
     }
 
@@ -82,9 +80,9 @@ public class RoleController {
         return new ResponseEntity<>(user,HttpStatus.OK);
     }
 
-    @RequestMapping(value="roles/{roleId}", method = RequestMethod.DELETE)
-    public ResponseEntity<Role> deleteRole(@PathVariable int roleId){
-        Role role = roleRepository.findById(roleId).orElseThrow(() -> new ResponseStatusException(
+    @RequestMapping(value="roles/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<Role> deleteRole(@PathVariable int id){
+        Role role = roleRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.BAD_REQUEST, "Role doesn't exist"));
         roleRepository.delete(role);
         return new ResponseEntity<>(HttpStatus.OK);

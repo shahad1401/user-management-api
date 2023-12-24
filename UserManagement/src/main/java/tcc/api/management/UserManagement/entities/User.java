@@ -17,6 +17,7 @@ public class User {
     @NotBlank(message = "username is empty")
     private String username;
     @Column(name="PASSWORD")
+    @NotBlank(message = "password is empty")
     private String pass;
 
     @ManyToMany(cascade = {
