@@ -1,6 +1,6 @@
 # user-management-api
 
-# Assumptions :
+# Assumptions
 - roles cannot be added unless there's a user to add the role to.
 - Permissions cannot be added unless there's a role to add them to.
 - Applications connot be created unless there's an API to add to.
@@ -9,13 +9,13 @@
 - security and caching is applied to API and Application entities only.
 - basic authentication is used (user,password).
 
-# Deployment instructions : 
+# Deployment instructions
 - install mySql and redis based on the configurations in application.properties.
 - an admin user is needed to post,put,delete APIs and Applications.
 - a developer user is needed to get APIs and Applications.
 - use Postman basic authentication to login with created user
 
-# JSON Objects to use in request body :
+# JSON Objects to use in request body
 
 User :
 {
@@ -52,7 +52,7 @@ Application :
 "status":"running"
 }
 
-# API paths and requirements:
+# API paths and requirements
 
 User : 
 
@@ -147,7 +147,7 @@ DELETE : localhost:8080/application/{id}
 [requires admin permission]
 include an application id in the path.
 
-# Security : 
+# Security  
 using spring-boot-starter-security dependency, types of security applied :
 
 1- password encoding 
@@ -158,7 +158,7 @@ APIUserDetails and APIUserDetailsService were used to map users asking for autho
 API and Application paths both require authorization to access.
 First the @EnableMethodSecurity annotiation was used in the security configuration to enable authrization on method level, the @PreAuthorize was used on controller methods and the role {"ADMIN","DEVELOPER"} was specified for each method to control access.
 
-# Cashing : 
+# Cashing 
 Redis was used for the caching using the spring-boot-starter-data-redis dependency.
 redis was installed in my local machine then configured in application.properties.
 the annotation @Cacheable was used in GET methods to cache the responces.
