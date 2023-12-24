@@ -2,6 +2,8 @@ package tcc.api.management.UserManagement.controllers;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +14,7 @@ import tcc.api.management.UserManagement.entities.User;
 import tcc.api.management.UserManagement.repository.APIRepository;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class APIController {
@@ -21,6 +24,7 @@ public class APIController {
 
     @RequestMapping(value="api", method = RequestMethod.POST)
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CacheEvict(value = "APIs", allEntries = true)
     public ResponseEntity<API> createAPI(@RequestBody API api) {
         try{
             API savedAPI = apiRepository.save(api);
@@ -33,6 +37,15 @@ public class APIController {
 
     }
 
+    @RequestMapping(value="api/all", method = RequestMethod.GET)
+    @PreAuthorize("hasAuthority('DEVELOPER')")
+    @Cacheable("APIs")
+    public List<API> readAllAPIs() {
+        List<API> apis = apiRepository.findAll();
+        return apis;
+    }
+
+
     @RequestMapping(value="api/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasAuthority('DEVELOPER')")
     public ResponseEntity<API> readAPI(@PathVariable int id) {
@@ -43,6 +56,7 @@ public class APIController {
 
     @RequestMapping(value="api/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasAuthority('ADMIN')")
+    @CacheEvict(value = "APIs", allEntries = true)
     public ResponseEntity<API> updateAPI(@PathVariable int id, @RequestBody API api){
             API existingApi = apiRepository.findById(id).orElseThrow(() -> new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "API doesn't exist"));
